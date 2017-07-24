@@ -43,6 +43,11 @@ public:
   * Calculate the total PID error.
   */
   double TotalError();
+
+  /*
+  * Calculate the control based on the cross track error and the PID parameters
+  */
+  double CalculateControlValue();
 };
 
 #endif /* PID_H */

@@ -34,3 +34,6 @@ double PID::TotalError() {
   return total_error;
 }
 
+double PID::CalculateControlValue() {
+  return -Kp * p_error - Kd * d_error - Ki * i_error;
+}
