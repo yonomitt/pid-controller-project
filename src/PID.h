@@ -10,6 +10,8 @@ public:
   double i_error;
   double d_error;
 
+  double total_error;
+
   /*
   * Coefficients
   */ 
@@ -35,12 +37,17 @@ public:
   /*
   * Update the PID error variables given cross track error.
   */
-  void UpdateError(double cte);
+  void UpdateError(double cte, double dt = 1.0);
 
   /*
   * Calculate the total PID error.
   */
   double TotalError();
+
+  /*
+  * Calculate the control based on the cross track error and the PID parameters
+  */
+  double CalculateControlValue();
 };
 
 #endif /* PID_H */
