@@ -33,15 +33,25 @@ int main()
 {
   uWS::Hub h;
 
+  // min_cte is the minimum absolute cross track error seen when changing directions
   double min_cte = std::numeric_limits<double>::max();
+
+  // last_cte is the previously seen cross track error
   double last_cte = 0.0;
+
+  // last_dcte is the previous delta cross track error calculated
   double last_dcte = 0.1;
+
+  // count keeps track of the total number of telemetry packages seen
+  // used for calculating an average (squared) error
   int count = 0;
 
+  // PID controller to control the steering angle
   PID steer_pid;
-  PID speed_pid;
-  // TODO: Initialize the pid variable.
   steer_pid.Init(0.375, 0.003125, 5.625);
+
+  // PID controller to control the throttle
+  PID speed_pid;
   speed_pid.Init(0.578125, 0.00125, 6.75);
 
   h.onMessage([&steer_pid, &speed_pid, &count, &min_cte, &last_cte, &last_dcte](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
@@ -62,36 +72,46 @@ int main()
           double angle = std::stod(j[1]["steering_angle"].get<std::string>());
           double steer_value;
           double throttle_value;
-          /*
-          * TODO: Calcuate steering value here, remember the steering value is
-          * [-1, 1].
-          * NOTE: Feel free to play around with the throttle and speed. Maybe use
-          * another PID controller to control the speed!
-          */
 
+          // Used for calculating debugging values to determine good parameters
+
+          // dcte is the delta cross track error
           double dcte = cte - last_cte;
           
+          // if the last delta cross track error is effectively zero or
+          // if the current delta cross track error has a different sign than the last one
           if ((std::abs(last_dcte) < 0.001) || ((dcte * last_dcte) < 0)) {
+
+              // check if the cross track error is less than the minimum one seen
               if (std::abs(cte) < min_cte) {
                   min_cte = std::abs(cte);
               }
           }
 
+          // update last_(d)cte for the next telemtry package
           last_cte = cte;
           last_dcte = dcte;
 
+          // Update the steering PID with the current cross track error
           steer_pid.UpdateError(cte);
+
+          // Calculate the new steering angle
           steer_value = steer_pid.CalculateControlValue();
 
+          // Clamp steering angle to [-1, 1]
           if (steer_value < -1.0) {
             steer_value = -1.0;
           } else if (steer_value > 1.0) {
             steer_value = 1.0;
           }
 
+          // Update the throttle PID with the current speed recentered around 30mph
           speed_pid.UpdateError(speed - 30);
+
+          // Calculate the new throttle value
           throttle_value = speed_pid.CalculateControlValue();
 
+          // Clamp the throttle value to [0, 1]
           if (throttle_value < 0.0) {
               throttle_value = 0.0;
           } else if (throttle_value > 1.0) {
