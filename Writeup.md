@@ -25,3 +25,5 @@ Oddly enough, even though I chose parameters that were "optimal" according to my
 So on a whim, I copied the parameters Sebastian used for the robot in the PID Controller lesson and ran the simulator with those. The car drove *much* more smoothly, despite having a higher overall error rate. I unsystematically fiddled with the numbers a little bit until I was happy with the overall performance.
 
 Even though the error is higher, the car seems to drive better and it never gets close to leaving the lane.
+
+I have left my "optimized" hyper parameters in the code, but commented out, for comparison.
