@@ -48,11 +48,13 @@ int main()
 
   // PID controller to control the steering angle
   PID steer_pid;
-  steer_pid.Init(0.375, 0.003125, 5.625);
+  //steer_pid.Init(0.375, 0.003125, 5.625);
+  steer_pid.Init(0.15, 0.002, 2.5);
 
   // PID controller to control the throttle
   PID speed_pid;
-  speed_pid.Init(0.578125, 0.00125, 6.75);
+  //speed_pid.Init(0.578125, 0.00125, 6.75);
+  speed_pid.Init(0.2, 0.004, 3.0);
 
   h.onMessage([&steer_pid, &speed_pid, &count, &min_cte, &last_cte, &last_dcte](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
