@@ -2,10 +2,6 @@
 
 using namespace std;
 
-/*
-* TODO: Complete the PID class.
-*/
-
 PID::PID() {}
 
 PID::~PID() {}
@@ -27,6 +23,7 @@ void PID::UpdateError(double cte, double dt) {
     p_error = cte;
     i_error += cte;
 
+    // square the cross track error to ensure total_error is always positive
     total_error += cte * cte;
 }
 
